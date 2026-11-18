@@ -34,9 +34,19 @@ export async function POST(request: Request) {
     text: text.trim().slice(0, 2000),
     time: Math.max(0, Number(time) || 0),
     createdAt: new Date().toISOString(),
+    status: "open",
   };
   await write(id, [...(await read(id)), c]);
   return NextResponse.json(c);
+}
+
+// Đổi trạng thái góp ý (chưa thực hiện / hoàn thành), cần mật khẩu quản trị
+export async function PATCH(request: Request) {
+  const { id, commentId, status, password } = await request.json();
+  if (!process.env.ADMIN_PASSWORD || password !== process.env.ADMIN_PASSWORD) return NextResponse.json({ error: "Sai mật khẩu" }, { status: 401 });
+  if (!valid(id) || (status !== "open" && status !== "done")) return NextResponse.json({ error: "Dữ liệu không hợp lệ" }, { status: 400 });
+  await write(id, (await read(id)).map((c) => (c.id === commentId ? { ...c, status } : c)));
+  return NextResponse.json({ ok: true });
 }
 
 // Xoá góp ý cần mật khẩu quản trị (biến môi trường ADMIN_PASSWORD)

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { videoUrl, type Video } from "@/lib/videos";
 import { categoryOf } from "@/lib/categories";
+import CommentBadge from "./CommentBadge";
 
 export default function VideoCard({ v }: { v: Video }) {
   const cat = categoryOf(v.id);
@@ -9,6 +10,7 @@ export default function VideoCard({ v }: { v: Video }) {
       <div className="thumb">
         <video src={`${videoUrl(v.id)}#t=0.5`} preload="metadata" muted />
         <span className="play">▶</span>
+        <CommentBadge id={v.id} />
       </div>
       <div className="info">
         {cat && <span className="tag" style={{ background: cat.color }}>{cat.name}</span>}

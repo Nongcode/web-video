@@ -12,6 +12,7 @@ export default function Player({ video }: { video: Video }) {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [filter, setFilter] = useState<"all" | "open" | "done">("all");
 
   const load = useCallback(async () => {
     try {
@@ -55,7 +56,22 @@ export default function Player({ video }: { video: Video }) {
     else setErr("Sai mật khẩu.");
   }
 
-  const sorted = [...comments].sort((a, b) => a.time - b.time);
+  async function toggle(c: Comment) {
+    const password = sessionStorage.getItem("pw") ?? prompt("Mật khẩu quản trị để đổi trạng thái:");
+    if (!password) return;
+    const status = c.status === "done" ? "open" : "done";
+    const res = await fetch("/api/comments", { method: "PATCH", body: JSON.stringify({ id: video.id, commentId: c.id, status, password }) });
+    if (res.ok) {
+      sessionStorage.setItem("pw", password);
+      setComments((p) => p.map((x) => (x.id === c.id ? { ...x, status } : x)));
+    } else {
+      sessionStorage.removeItem("pw");
+      setErr("Sai mật khẩu.");
+    }
+  }
+
+  const sorted = [...comments].filter((c) => filter === "all" || (c.status ?? "open") === filter).sort((a, b) => a.time - b.time);
+  const nOpen = comments.filter((c) => (c.status ?? "open") === "open").length;
   return (
     <div className="watch">
       <div>
@@ -64,6 +80,11 @@ export default function Player({ video }: { video: Video }) {
       </div>
       <div className="panel">
         <b>Góp ý ({comments.length})</b>
+        <div className="tabs">
+          <button className={filter === "all" ? "on" : ""} onClick={() => setFilter("all")}>Tất cả</button>
+          <button className={filter === "open" ? "on" : ""} onClick={() => setFilter("open")}>Chưa thực hiện ({nOpen})</button>
+          <button className={filter === "done" ? "on" : ""} onClick={() => setFilter("done")}>Hoàn thành ({comments.length - nOpen})</button>
+        </div>
         <div className="row">
           <input placeholder="Tên của bạn" value={author} onChange={(e) => setAuthor(e.target.value)} style={{ flex: 1 }} />
         </div>
@@ -74,11 +95,15 @@ export default function Player({ video }: { video: Video }) {
         </div>
         {err && <p style={{ color: "#d1242f" }}>{err}</p>}
         {sorted.map((c) => (
-          <div className="cm" key={c.id}>
+          <div className={`cm ${c.status === "done" ? "is-done" : ""}`} key={c.id}>
             <button className="ts" onClick={() => { if (ref.current) { ref.current.currentTime = c.time; ref.current.play(); } }}>{fmt(c.time)}</button>{" "}
-            <b>{c.author}</b>
+            <b>{c.author}</b>{" "}
+            <span className={`st ${c.status === "done" ? "done" : "open"}`}>{c.status === "done" ? "Hoàn thành" : "Chưa thực hiện"}</span>
             <button className="ghost" style={{ float: "right", padding: "0 6px" }} onClick={() => remove(c.id)}>×</button>
             <div style={{ whiteSpace: "pre-wrap" }}>{c.text}</div>
+            <button className="ghost" style={{ padding: "1px 8px", fontSize: 12 }} onClick={() => toggle(c)}>
+              {c.status === "done" ? "Mở lại" : "Đánh dấu hoàn thành"}
+            </button>
           </div>
         ))}
       </div>

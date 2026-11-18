@@ -34,3 +34,13 @@ button:disabled{opacity:.5;cursor:default}
 .cm{padding:8px 0;border-top:1px solid #eee}
 .ts{color:#1d4ed8;cursor:pointer;font-weight:600;background:none;border:0;padding:0}
 .row{display:flex;gap:8px;align-items:center;margin:8px 0}
+.badge{position:absolute;top:8px;left:8px;z-index:1;color:#fff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;box-shadow:0 2px 6px #0005}
+.badge.open{background:#dc2626}
+.badge.done{background:#16a34a}
+.st{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;color:#fff}
+.st.open{background:#dc2626}
+.st.done{background:#16a34a}
+.cm.is-done{opacity:.6}
+.tabs{display:flex;gap:6px;margin:8px 0}
+.tabs button{background:#fff;color:#1b1f24;border-color:#c9ced4;padding:3px 10px;font-size:13px}
+.tabs button.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
