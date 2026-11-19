@@ -7,7 +7,7 @@ mkdirSync("public/videos", { recursive: true });
 mkdirSync("data", { recursive: true });
 const list = [];
 // Chỉ lấy video thuộc danh mục xe và danh mục chung (các video khác đã duyệt, không đưa lên nữa)
-const KEEP = /^huong-dan-danh-muc-(xe|doi-xe|dong-xe|hang-xe|loai-xe|model-xe|tai-trong-xe|bien-so-xe|nhien-lieu|lai-xe-ngoai|chuong|muc|tieu-muc|ngan-hang|linh-vuc-cong-ty-kinh-doanh)$/;
+const KEEP = /^(huong-dan-danh-muc-(xe|doi-xe|dong-xe|hang-xe|loai-xe|model-xe|tai-trong-xe|bien-so-xe|nhien-lieu|lai-xe-ngoai|chuong|muc|tieu-muc|ngan-hang|linh-vuc-cong-ty-kinh-doanh)|cai-dat-ung-dung)$/;
 for (const d of readdirSync(SRC)) {
   if (!KEEP.test(d)) continue;
   const f = join(SRC, d, `${d}.mp4`);
