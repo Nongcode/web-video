@@ -8,7 +8,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="vi" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <header>
+        <header className="site-header">
           <Link href="/">▶ Video hướng dẫn sử dụng</Link>
           <Link href="/admin" style={{ opacity: 0.85 }}>⚙ Quản trị</Link>
         </header>

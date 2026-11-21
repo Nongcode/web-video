@@ -1,3 +1,4 @@
+
 export type Category = { slug: string; name: string; icon: string; color: string };
 
 // Danh mục cố định trong code. Thêm danh mục mới: thêm một dòng ở đây rồi deploy lại.
