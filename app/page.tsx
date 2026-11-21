@@ -2,11 +2,13 @@ import Link from "next/link";
 import { readVideos } from "@/lib/store";
 import { categories } from "@/lib/categories";
 import Library from "@/components/Library";
+import VideoCard from "@/components/VideoCard";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const videos = await readVideos();
+  const approvedVideos = videos.filter((v) => v.approved);
   return (
     <div className="home-page">
       <section className="hero home-hero">
@@ -33,6 +35,14 @@ export default async function Home() {
             </span>
           </Link>
         </div>
+      </section>
+      <section className="home-section" aria-labelledby="approved-title">
+        <h2 id="approved-title">Video đã duyệt ({approvedVideos.length})</h2>
+        {approvedVideos.length ? (
+          <div className="grid">{approvedVideos.map((v) => <VideoCard key={v.id} v={v} />)}</div>
+        ) : (
+          <p className="muted">Chưa có video nào được duyệt.</p>
+        )}
       </section>
       <Library videos={videos} />
     </div>
