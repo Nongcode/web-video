@@ -1,6 +1,6 @@
 "use client";
 import { upload } from "@vercel/blob/client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { categories } from "@/lib/categories";
 import { slugify, type Video } from "@/lib/videos";
 
@@ -71,6 +71,26 @@ export default function Admin() {
     if (res.ok) load(); else setErr((await res.json()).error);
   }
 
+  async function replace(v: Video, f: File) {
+    if (!confirm(`Thay file video "${v.title}"? Góp ý giữ nguyên, trạng thái duyệt sẽ được đặt lại.`)) return;
+    setErr("");
+    setMsg(`Đang thay "${v.title}"…`);
+    try {
+      const ext = f.name.split(".").pop() ?? "mp4";
+      const blob = await upload(`videos/${v.id}-${Date.now().toString(36)}.${ext}`, f, {
+        access: "public", handleUploadUrl: "/api/upload", clientPayload: pw, multipart: true,
+        onUploadProgress: (p) => setMsg(`Đang tải lên: ${p.percentage.toFixed(0)}%`),
+      });
+      const res = await api("/api/videos", "PATCH", { password: pw, id: v.id, url: blob.url, size: f.size });
+      if (!res.ok) throw new Error((await res.json()).error);
+      setMsg("Đã thay video.");
+      load();
+    } catch (e) {
+      setMsg("");
+      setErr((e as Error).message);
+    }
+  }
+
   if (!authed) {
     return (
       <div className="panel" style={{ maxWidth: 420 }}>
@@ -108,14 +128,15 @@ export default function Admin() {
           <VideoRow key={v.id} v={v} onSave={async (title, category) => {
             const res = await api("/api/videos", "PATCH", { password: pw, id: v.id, title, category });
             if (res.ok) load(); else setErr((await res.json()).error);
-          }} onDelete={() => remove(v)} />
+          }} onDelete={() => remove(v)} onReplace={(f) => replace(v, f)} />
         ))}
       </div>
     </div>
   );
 }
 
-function VideoRow({ v, onSave, onDelete }: { v: Video; onSave: (t: string, c: string) => void; onDelete: () => void }) {
+function VideoRow({ v, onSave, onDelete, onReplace }: { v: Video; onSave: (t: string, c: string) => void; onDelete: () => void; onReplace: (f: File) => void }) {
+  const fileRef = useRef<HTMLInputElement>(null);
   const [t, setT] = useState(v.title);
   const [c, setC] = useState(v.category);
   const dirty = t !== v.title || c !== v.category;
@@ -126,6 +147,8 @@ function VideoRow({ v, onSave, onDelete }: { v: Video; onSave: (t: string, c: st
         {categories.map((x) => <option key={x.slug} value={x.slug}>{x.name}</option>)}
       </select>
       <button disabled={!dirty || !t.trim()} onClick={() => onSave(t, c)}>Lưu</button>
+      <button className="ghost" onClick={() => fileRef.current?.click()}>Thay video</button>
+      <input ref={fileRef} type="file" accept="video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) onReplace(f); e.target.value = ""; }} />
       <button className="ghost" onClick={onDelete}>Xoá</button>
     </div>
   );
