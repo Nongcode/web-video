@@ -8,8 +8,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="vi" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <header>
+        <header className="site-header">
           <Link href="/">▶ Video hướng dẫn sử dụng</Link>
+          <Link href="/" className="header-home-link">Quay lại trang chủ</Link>
         </header>
         <main>{children}</main>
       </body>

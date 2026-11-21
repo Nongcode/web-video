@@ -12,9 +12,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   return (
     <>
       <p><Link href="/" className="muted">← Trang chủ</Link></p>
-      <section className="hero" style={{ ["--c" as string]: cat.color }}>
-        <h1>{cat.icon} {cat.name}</h1>
-        <p>{videosOf(cat).length} video</p>
+      <section className="hero category-hero" style={{ ["--c" as string]: cat.color }}>
+        <div>
+          <h1>{cat.icon} {cat.name}</h1>
+          <p>{videosOf(cat).length} video</p>
+        </div>
+        <Link href="/" className="category-view-all">Xem tất cả</Link>
       </section>
       <div className="grid">{videosOf(cat).map((v) => <VideoCard key={v.id} v={v} />)}</div>
     </>
