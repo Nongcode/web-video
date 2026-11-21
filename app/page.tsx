@@ -21,7 +21,7 @@ export default async function Home() {
               <span className="ico" aria-hidden="true">{c.icon}</span>
               <span className="cat-copy">
                 <b>{c.name}</b>
-                <span className="muted">{videosOf(c).length} video</span>
+                <span className="muted">{videos.filter((v) => v.category === c.slug).length} video</span>
               </span>
             </Link>
           ))}

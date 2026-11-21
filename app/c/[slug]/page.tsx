@@ -17,7 +17,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       <section className="hero category-hero" style={{ ["--c" as string]: cat.color }}>
         <div>
           <h1>{cat.icon} {cat.name}</h1>
-          <p>{videosOf(cat).length} video</p>
+          <p>{videos.length} video</p>
         </div>
         <Link href="/" className="category-view-all">Xem tất cả</Link>
       </section>

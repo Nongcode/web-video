@@ -3,7 +3,6 @@
 // Giữ nguyên id (tên thư mục) để góp ý cũ vẫn gắn đúng video.
 import { put } from "@vercel/blob";
 import { readFileSync, statSync, existsSync } from "node:fs";
-import { join } from "node:path";
 
 const SRC = process.argv[2] ?? "D:/HRM-DNS-TPE/tools/video-huong-dan/out";
 const old = JSON.parse(readFileSync("data/videos.json", "utf8"));
@@ -18,7 +17,7 @@ const CAT = Object.fromEntries([
 
 const videos = [];
 for (const v of old) {
-  const file = join(SRC, v.id, `${v.id}.mp4`).replace(/\/g, "/");
+  const file = `${SRC}/${v.id}/${v.id}.mp4`;
   if (!existsSync(file)) { console.warn("Thiếu file", file); continue; }
   const blob = await put(`videos/${v.id}.mp4`, readFileSync(file), {
     access: "public", addRandomSuffix: false, allowOverwrite: true, contentType: "video/mp4",
