@@ -1,4 +1,5 @@
 import "./globals.css";
+import "ooxml-pages/pptx.css";
 import Link from "next/link";
 
 export const metadata = { title: "Video hướng dẫn sử dụng" };

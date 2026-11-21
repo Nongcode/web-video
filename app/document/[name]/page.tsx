@@ -5,9 +5,10 @@ import { notFound } from "next/navigation";
 import ExcelJS from "exceljs";
 import DocxPreview from "../DocxPreview";
 import DocPreview from "../DocPreview";
+import PptxPreview from "../PptxPreview";
 
 const directory = path.join(process.cwd(), "public", "documents");
-const allowedExtensions = new Set([".doc", ".docx", ".xlsx"]);
+const allowedExtensions = new Set([".doc", ".docx", ".xlsx", ".pdf", ".pptx"]);
 
 type CellPreview = { text: string; style: Record<string, string | number> };
 type SheetImage = { src: string; cell: string };
@@ -42,7 +43,7 @@ function cellStyle(cell: ExcelJS.Cell): Record<string, string | number> {
   if (font.bold) style.fontWeight = "700";
   if (font.italic) style.fontStyle = "italic";
   if (font.underline) style.textDecoration = "underline";
-  if (font.size) style.fontSize = `${font.size}pt`;
+  if (font.size) style.fontSize = `${font.size * 1.15}pt`;
   if (fontColor) style.color = fontColor;
   if (fillColor && fillColor !== "#000000") style.backgroundColor = fillColor;
   if (alignment.horizontal && ["left", "center", "right", "justify"].includes(alignment.horizontal)) {
@@ -170,6 +171,16 @@ export default async function DocumentViewer({ params }: { params: Promise<{ nam
             </section>
           ))}
         </div>
+      ) : extension === ".pdf" ? (
+        <section className="document-content document-pdf-shell">
+          <iframe
+            className="document-pdf-preview"
+            src={`${downloadUrl}#toolbar=1&navpanes=0`}
+            title={`Xem trước PDF: ${name}`}
+          />
+        </section>
+      ) : extension === ".pptx" ? (
+        <PptxPreview name={name} />
       ) : null}
     </>
   );

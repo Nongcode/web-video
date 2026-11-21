@@ -2,13 +2,12 @@ import { readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import Link from "next/link";
 
-const allowedExtensions = new Set([".doc", ".docx", ".xlsx"]);
+const allowedExtensions = new Set([".doc", ".docx", ".xlsx", ".pdf", ".pptx"]);
 
 type DocumentFile = { name: string; extension: string; size: number };
 
 async function getDocuments(): Promise<DocumentFile[]> {
   const directory = path.join(process.cwd(), "public", "documents");
-
   try {
     const entries = await readdir(directory, { withFileTypes: true });
     const files = await Promise.all(
