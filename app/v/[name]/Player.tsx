@@ -90,14 +90,16 @@ export default function Player({ video }: { video: Video }) {
         <h2>
           {video.title} {approved && <span className="approved-tag">✓ Đã duyệt</span>}
         </h2>
-        <button className={approved ? "ghost" : ""} onClick={approve} disabled={!approved && nOpen > 0}
-          title={!approved && nOpen > 0 ? "Còn góp ý chưa thực hiện" : ""}>
-          {approved ? "Bỏ duyệt" : "✓ Duyệt video"}
-        </button>
-        {!approved && nOpen > 0 && <span className="muted"> · Cần xử lý hết {nOpen} góp ý trước khi duyệt</span>}
       </div>
       <div className="panel">
-        <b>Góp ý ({comments.length})</b>
+        <div className="panel-head">
+          <b>Góp ý ({comments.length})</b>
+          <button className={approved ? "ghost" : ""} onClick={approve} disabled={!approved && nOpen > 0}
+            title={!approved && nOpen > 0 ? "Còn góp ý chưa thực hiện" : ""}>
+            {approved ? "Bỏ duyệt" : "✓ Duyệt video"}
+          </button>
+        </div>
+        {!approved && nOpen > 0 && <p className="muted" style={{ fontSize: 13, margin: "4px 0 0" }}>Cần xử lý hết {nOpen} góp ý trước khi duyệt.</p>}
         <div className="tabs">
           <button className={filter === "all" ? "on" : ""} onClick={() => setFilter("all")}>Tất cả</button>
           <button className={filter === "open" ? "on" : ""} onClick={() => setFilter("open")}>Chưa thực hiện ({nOpen})</button>
