@@ -1,11 +1,13 @@
 import { list, put } from "@vercel/blob";
 import { NextResponse } from "next/server";
-import { videos, type Comment } from "@/lib/videos";
+import type { Comment } from "@/lib/videos";
+import { readVideos, checkPassword, denied } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
 const path = (id: string) => `comments/${id}.json`;
-const valid = (id: unknown): id is string => typeof id === "string" && videos.some((v) => v.id === id);
+const valid = async (id: unknown): Promise<boolean> =>
+  typeof id === "string" && (await readVideos()).some((v) => v.id === id);
 
 async function read(id: string): Promise<Comment[]> {
   const { blobs } = await list({ prefix: path(id), limit: 1 });
@@ -21,13 +23,13 @@ const write = (id: string, comments: Comment[]) =>
 
 export async function GET(request: Request) {
   const id = new URL(request.url).searchParams.get("id");
-  if (!valid(id)) return NextResponse.json({ error: "Video không tồn tại" }, { status: 404 });
-  return NextResponse.json(await read(id));
+  if (!(await valid(id))) return NextResponse.json({ error: "Video không tồn tại" }, { status: 404 });
+  return NextResponse.json(await read(id as string));
 }
 
 export async function POST(request: Request) {
   const { id, author, text, time } = await request.json();
-  if (!valid(id) || typeof text !== "string" || !text.trim()) return NextResponse.json({ error: "Dữ liệu không hợp lệ" }, { status: 400 });
+  if (!(await valid(id)) || typeof text !== "string" || !text.trim()) return NextResponse.json({ error: "Dữ liệu không hợp lệ" }, { status: 400 });
   const c: Comment = {
     id: crypto.randomUUID(),
     author: String(author || "Ẩn danh").slice(0, 50),
@@ -43,17 +45,17 @@ export async function POST(request: Request) {
 // Đổi trạng thái góp ý (chưa thực hiện / hoàn thành), cần mật khẩu quản trị
 export async function PATCH(request: Request) {
   const { id, commentId, status, password } = await request.json();
-  if (!process.env.ADMIN_PASSWORD || password !== process.env.ADMIN_PASSWORD) return NextResponse.json({ error: "Sai mật khẩu" }, { status: 401 });
-  if (!valid(id) || (status !== "open" && status !== "done")) return NextResponse.json({ error: "Dữ liệu không hợp lệ" }, { status: 400 });
+  if (!checkPassword(password)) return denied();
+  if (!(await valid(id)) || (status !== "open" && status !== "done")) return NextResponse.json({ error: "Dữ liệu không hợp lệ" }, { status: 400 });
   await write(id, (await read(id)).map((c) => (c.id === commentId ? { ...c, status } : c)));
   return NextResponse.json({ ok: true });
 }
 
-// Xoá góp ý cần mật khẩu quản trị (biến môi trường ADMIN_PASSWORD)
+// Xoá góp ý cần mật khẩu quản trị
 export async function DELETE(request: Request) {
   const { id, commentId, password } = await request.json();
-  if (!process.env.ADMIN_PASSWORD || password !== process.env.ADMIN_PASSWORD) return NextResponse.json({ error: "Sai mật khẩu" }, { status: 401 });
-  if (!valid(id)) return NextResponse.json({ error: "Video không tồn tại" }, { status: 404 });
+  if (!checkPassword(password)) return denied();
+  if (!(await valid(id))) return NextResponse.json({ error: "Video không tồn tại" }, { status: 404 });
   await write(id, (await read(id)).filter((c) => c.id !== commentId));
   return NextResponse.json({ ok: true });
 }

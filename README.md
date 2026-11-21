@@ -1,16 +1,24 @@
 # Web video HDSD
 
-Next.js. Video nằm ở `public/videos`, danh sách ở `data/videos.json`, danh mục ở `lib/categories.ts`.
-Góp ý theo mốc thời gian lưu chung bằng Vercel Blob (`app/api/comments/route.ts`, file `comments/<id>.json`).
+Next.js trên Vercel. Video và chỉ mục nằm trong Vercel Blob (store public):
+- `videos/<id>.<ext>`: file video
+- `index/videos.json`: danh sách video (tiêu đề, danh mục, đường dẫn)
+- `comments/<id>.json`: góp ý của từng video
 
-## Deploy
-1. Đẩy repo lên GitHub, import vào Vercel (Root Directory `web-video`).
-2. Project → Storage → Create Database → **Blob** (chọn Public) → Connect Project. Vercel tự thêm `BLOB_READ_WRITE_TOKEN`.
-3. Settings → Environment Variables: thêm `ADMIN_PASSWORD` (mật khẩu để xoá góp ý).
-4. Redeploy.
+Danh mục cố định trong `lib/categories.ts`.
 
-## Cập nhật video
-`node sync-videos.mjs [thư-mục-out]` (mặc định `D:/HRM-DNS-TPE/tools/video-huong-dan/out`), commit + push.
+## Thiết lập lần đầu
+1. Vercel → Storage → Blob (Public) → Connect Project.
+2. Settings → Environment Variables: `ADMIN_PASSWORD`.
+3. Redeploy.
+4. Chuyển video cũ lên Blob (chạy một lần, cần token Blob ở máy):
+   `vercel env pull .env.local`, rồi `node --env-file=.env.local scripts/migrate-videos.mjs`
+
+## Quản trị video
+Vào `/admin`, nhập `ADMIN_PASSWORD`:
+- **Thêm:** nhập tiêu đề, chọn danh mục, chọn file → Tải lên.
+- **Sửa:** đổi tiêu đề hoặc danh mục trong dòng video → Lưu.
+- **Xoá:** Xoá video, kèm file và góp ý của nó.
 
 ## Chạy local
-`vercel link && vercel env pull .env.local`, rồi `npm run dev`. Không có token thì góp ý báo lỗi, phần còn lại vẫn chạy.
+`npm install` rồi `npm run dev` (cần `.env.local` có token Blob để xem dữ liệu thật).

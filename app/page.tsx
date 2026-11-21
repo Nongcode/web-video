@@ -1,9 +1,12 @@
 import Link from "next/link";
-import { videos } from "@/lib/videos";
-import { categories, videosOf } from "@/lib/categories";
+import { readVideos } from "@/lib/store";
+import { categories } from "@/lib/categories";
 import Library from "@/components/Library";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const videos = await readVideos();
   return (
     <>
       <section className="hero">
@@ -16,12 +19,12 @@ export default function Home() {
           <Link key={c.slug} href={`/c/${c.slug}`} className="cat" style={{ ["--c" as string]: c.color }}>
             <span className="ico">{c.icon}</span>
             <b>{c.name}</b>
-            <span className="muted">{videosOf(c).length} video</span>
+            <span className="muted">{videos.filter((v) => v.category === c.slug).length} video</span>
           </Link>
         ))}
       </div>
       <h2>Tất cả video</h2>
-      <Library videos={videos} />
+      {videos.length ? <Library videos={videos} /> : <p className="muted">Chưa có video nào. Quản trị viên tải lên ở mục Quản trị.</p>}
     </>
   );
 }

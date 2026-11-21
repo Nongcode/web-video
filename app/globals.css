@@ -44,3 +44,4 @@ button:disabled{opacity:.5;cursor:default}
 .tabs{display:flex;gap:6px;margin:8px 0}
 .tabs button{background:#fff;color:#1b1f24;border-color:#c9ced4;padding:3px 10px;font-size:13px}
 .tabs button.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+select{font:inherit;padding:7px 10px;border:1px solid #c9ced4;border-radius:6px;background:#fff}

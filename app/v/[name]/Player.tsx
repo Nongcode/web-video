@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { videoUrl, type Comment, type Video } from "@/lib/videos";
+import type { Comment, Video } from "@/lib/videos";
 
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
@@ -75,7 +75,7 @@ export default function Player({ video }: { video: Video }) {
   return (
     <div className="watch">
       <div>
-        <video ref={ref} src={videoUrl(video.id)} controls preload="metadata" />
+        <video ref={ref} src={video.url} controls preload="metadata" />
         <h2>{video.title}</h2>
       </div>
       <div className="panel">
