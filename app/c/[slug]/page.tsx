@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { categories, videosOf } from "@/lib/categories";
+import { readVideos } from "@/lib/store";
+import { categories, categoryBySlug } from "@/lib/categories";
 import VideoCard from "@/components/VideoCard";
 
-export const generateStaticParams = () => categories.map((c) => ({ slug: c.slug }));
+export const dynamic = "force-dynamic";
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const cat = categories.find((c) => c.slug === slug);
+  const cat = categoryBySlug(slug);
   if (!cat) notFound();
+  const videos = (await readVideos()).filter((v) => v.category === cat.slug);
   return (
     <>
       <p><Link href="/" className="muted">← Trang chủ</Link></p>
@@ -19,7 +21,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         </div>
         <Link href="/" className="category-view-all">Xem tất cả</Link>
       </section>
-      <div className="grid">{videosOf(cat).map((v) => <VideoCard key={v.id} v={v} />)}</div>
+      <div className="grid">{videos.map((v) => <VideoCard key={v.id} v={v} />)}</div>
     </>
   );
 }

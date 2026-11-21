@@ -1,9 +1,12 @@
 import Link from "next/link";
-import { videos } from "@/lib/videos";
-import { categories, videosOf } from "@/lib/categories";
+import { readVideos } from "@/lib/store";
+import { categories } from "@/lib/categories";
 import Library from "@/components/Library";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const videos = await readVideos();
   return (
     <div className="home-page">
       <section className="hero home-hero">
