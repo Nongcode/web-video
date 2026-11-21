@@ -9,6 +9,7 @@ const raw: Category[] = [
   { slug: "xe", name: "Danh mục xe", icon: "🚚", color: "#2563eb", ids: dm(["xe", "doi-xe", "dong-xe", "hang-xe", "loai-xe", "model-xe", "tai-trong-xe", "bien-so-xe", "nhien-lieu", "lai-xe-ngoai"]) },
   { slug: "chung", name: "Danh mục chung", icon: "📚", color: "#d97706", ids: dm(["chuong", "muc", "tieu-muc", "ngan-hang", "linh-vuc-cong-ty-kinh-doanh"]) },
   { slug: "app-dien-thoai", name: "App điện thoại", icon: "📱", color: "#0891b2", ids: ["cai-dat-ung-dung"] },
+  { slug: "phan-chia-thi-truong", name: "Phiếu phân chia thị trường", icon: "🧭", color: "#9333ea", ids: ["huong-dan-phan-chia-thi-truong-theo-nhan-vien", "huong-dan-phan-chia-thi-truong-theo-phong-ban"] },
 ];
 
 const assigned = new Set(raw.flatMap((c) => c.ids));
