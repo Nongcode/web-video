@@ -9,18 +9,20 @@ main{max-width:1200px;margin:0 auto;padding:24px}
 .hero h1{margin:0 0 4px}.hero p{margin:0;opacity:.85}
 .docx-preview-shell{overflow:auto;padding:0;border:0;background:transparent;box-shadow:none}
 .docx-preview-shell>.muted,.docx-preview-shell>.document-preview-error{margin:14px 16px}
-.docx-preview-root{width:80%;min-width:0;margin:0 auto;overflow:auto;border-radius:10px}
+.docx-preview-root{width:100%;min-width:0;margin:0 auto;overflow:auto;border-radius:12px;padding:clamp(12px,2vw,28px);background:#e8ebf2}
 .docx-preview-root .docx-preview-wrapper{display:flex;align-items:stretch!important;min-width:0!important;width:100%;padding:0!important;border-radius:0;background:transparent!important}
-.docx-preview-root .docx-preview-wrapper>section.docx-preview{width:100%!important;min-width:0!important;margin:0 0 20px!important;border-radius:0;box-shadow:none!important}
-.docx-preview-root img{max-width:100%;height:auto}
+.docx-preview-root .docx-preview-wrapper>section.docx-preview{width:min(820px,100%)!important;min-width:0!important;min-height:0!important;margin:0 auto 24px!important;padding:clamp(24px,5vw,64px)!important;border-radius:4px;background:#fff;box-shadow:0 4px 18px #0002!important}
+@media(min-width:1100px){.docx-preview-root .docx-preview-wrapper>section.docx-preview{zoom:1.2}}
+.docx-preview-root img{width:auto!important;max-width:100%!important;height:auto!important}
+.docx-preview-root table{max-width:100%}
 .legacy-doc-preview{width:80%;min-width:0;margin:0 auto;overflow:auto}
 .legacy-doc-preview>.msdoc-root{width:100%;max-width:none;padding:0}
 .legacy-doc-preview .msdoc-layout-page{width:100%!important;max-width:100%;margin:0 auto}
 .legacy-doc-preview img{max-width:100%;height:auto}
 .legacy-doc-preview table{max-width:100%;border-collapse:collapse}
-.document-viewer-header{display:flex;width:80%;max-width:none;flex-direction:column;align-items:center;margin-right:auto;margin-left:auto;text-align:center}
+.document-viewer-header{display:flex;width:100%;max-width:none;flex-direction:column;align-items:center;margin-right:auto;margin-left:auto;text-align:center}
 main:has(.document-viewer-header){max-width:1560px}
-.document-breadcrumbs{display:flex;width:80%;align-items:center;gap:9px;margin:0 auto 14px;color:#64748b;font-size:14px}
+.document-breadcrumbs{display:flex;width:100%;align-items:center;gap:9px;margin:0 auto 14px;color:#64748b;font-size:14px}
 .document-breadcrumbs a:hover{color:#6d28d9;text-decoration:underline}
 .spreadsheet-images{display:flex;flex-wrap:wrap;gap:14px;margin-top:18px}
 .spreadsheet-images figure{max-width:360px;margin:0;padding:10px;border:1px solid #e1e4e8;border-radius:10px;background:#fff}
