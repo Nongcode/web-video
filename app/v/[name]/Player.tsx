@@ -72,15 +72,11 @@ export default function Player({ video }: { video: Video }) {
   }
 
   async function approve() {
-    const password = sessionStorage.getItem("pw") ?? prompt(approved ? "Mật khẩu quản trị để bỏ duyệt:" : "Mật khẩu quản trị để duyệt video:");
-    if (!password) return;
-    const res = await fetch("/api/videos", { method: "PATCH", body: JSON.stringify({ id: video.id, approved: !approved, password }) });
+    const res = await fetch("/api/videos", { method: "PATCH", body: JSON.stringify({ id: video.id, approved: !approved }) });
     if (res.ok) {
-      sessionStorage.setItem("pw", password);
       setApproved(!approved);
       setErr("");
     } else {
-      sessionStorage.removeItem("pw");
       setErr((await res.json()).error ?? "Không duyệt được.");
     }
   }

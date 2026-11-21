@@ -29,7 +29,9 @@ export async function POST(request: Request) {
 // Sửa tiêu đề, danh mục hoặc trạng thái duyệt
 export async function PATCH(request: Request) {
   const { password, id, title, category, approved } = await request.json();
-  if (!checkPassword(password)) return denied();
+  // Duyệt / bỏ duyệt không cần mật khẩu; sửa tiêu đề hoặc danh mục thì cần
+  const editing = title !== undefined || category !== undefined;
+  if (editing && !checkPassword(password)) return denied();
   if ((title !== undefined && !okTitle(title)) || (category !== undefined && !okCategory(category)) || (approved !== undefined && typeof approved !== "boolean"))
     return NextResponse.json({ error: "Dữ liệu không hợp lệ" }, { status: 400 });
   const videos = await readVideos();
