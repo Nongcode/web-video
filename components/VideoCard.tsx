@@ -11,6 +11,7 @@ export default function VideoCard({ v }: { v: Video }) {
         <video src={`${v.url}#t=0.5`} preload="metadata" muted />
         <span className="play">▶</span>
         <CommentBadge id={v.id} />
+        {v.approved && <span className="approved-tag card-approved">✓ Đã duyệt</span>}
       </div>
       <div className="info">
         {cat && <span className="tag" style={{ background: cat.color }}>{cat.name}</span>}

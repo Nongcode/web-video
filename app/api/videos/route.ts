@@ -1,7 +1,7 @@
 import { del, list } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { categories } from "@/lib/categories";
-import { readVideos, writeVideos, checkPassword, denied } from "@/lib/store";
+import { readVideos, readComments, writeVideos, checkPassword, denied } from "@/lib/store";
 import type { Video } from "@/lib/videos";
 
 export const dynamic = "force-dynamic";
@@ -26,15 +26,23 @@ export async function POST(request: Request) {
   return NextResponse.json(v);
 }
 
-// Sửa tiêu đề hoặc danh mục
+// Sửa tiêu đề, danh mục hoặc trạng thái duyệt
 export async function PATCH(request: Request) {
-  const { password, id, title, category } = await request.json();
+  const { password, id, title, category, approved } = await request.json();
   if (!checkPassword(password)) return denied();
-  if ((title !== undefined && !okTitle(title)) || (category !== undefined && !okCategory(category)))
+  if ((title !== undefined && !okTitle(title)) || (category !== undefined && !okCategory(category)) || (approved !== undefined && typeof approved !== "boolean"))
     return NextResponse.json({ error: "Dữ liệu không hợp lệ" }, { status: 400 });
   const videos = await readVideos();
   if (!videos.some((v) => v.id === id)) return NextResponse.json({ error: "Không tìm thấy video" }, { status: 404 });
-  await writeVideos(videos.map((v) => (v.id === id ? { ...v, ...(title !== undefined && { title: title.trim() }), ...(category !== undefined && { category }) } : v)));
+  // Chỉ duyệt khi không còn góp ý nào chưa thực hiện
+  if (approved === true && (await readComments(id)).some((c) => (c.status ?? "open") === "open"))
+    return NextResponse.json({ error: "Còn góp ý chưa thực hiện" }, { status: 409 });
+  await writeVideos(videos.map((v) => (v.id === id ? {
+    ...v,
+    ...(title !== undefined && { title: title.trim() }),
+    ...(category !== undefined && { category }),
+    ...(approved !== undefined && { approved }),
+  } : v)));
   return NextResponse.json({ ok: true });
 }
 

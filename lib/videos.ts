@@ -1,4 +1,4 @@
-export type Video = { id: string; title: string; category: string; url: string; size: number; uploadedAt: string };
+export type Video = { id: string; title: string; category: string; url: string; size: number; uploadedAt: string; approved?: boolean };
 export type Comment = { id: string; author: string; text: string; time: number; createdAt: string; status?: "open" | "done" };
 
 // Tạo id từ tiêu đề: "Phiếu phân chia" -> "phieu-phan-chia"

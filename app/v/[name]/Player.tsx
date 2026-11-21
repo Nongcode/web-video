@@ -13,6 +13,7 @@ export default function Player({ video }: { video: Video }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [filter, setFilter] = useState<"all" | "open" | "done">("all");
+  const [approved, setApproved] = useState(!!video.approved);
 
   const load = useCallback(async () => {
     try {
@@ -70,13 +71,34 @@ export default function Player({ video }: { video: Video }) {
     }
   }
 
+  async function approve() {
+    const password = sessionStorage.getItem("pw") ?? prompt(approved ? "Mật khẩu quản trị để bỏ duyệt:" : "Mật khẩu quản trị để duyệt video:");
+    if (!password) return;
+    const res = await fetch("/api/videos", { method: "PATCH", body: JSON.stringify({ id: video.id, approved: !approved, password }) });
+    if (res.ok) {
+      sessionStorage.setItem("pw", password);
+      setApproved(!approved);
+      setErr("");
+    } else {
+      sessionStorage.removeItem("pw");
+      setErr((await res.json()).error ?? "Không duyệt được.");
+    }
+  }
+
   const sorted = [...comments].filter((c) => filter === "all" || (c.status ?? "open") === filter).sort((a, b) => a.time - b.time);
   const nOpen = comments.filter((c) => (c.status ?? "open") === "open").length;
   return (
     <div className="watch">
       <div>
         <video ref={ref} src={video.url} controls preload="metadata" />
-        <h2>{video.title}</h2>
+        <h2>
+          {video.title} {approved && <span className="approved-tag">✓ Đã duyệt</span>}
+        </h2>
+        <button className={approved ? "ghost" : ""} onClick={approve} disabled={!approved && nOpen > 0}
+          title={!approved && nOpen > 0 ? "Còn góp ý chưa thực hiện" : ""}>
+          {approved ? "Bỏ duyệt" : "✓ Duyệt video"}
+        </button>
+        {!approved && nOpen > 0 && <span className="muted"> · Cần xử lý hết {nOpen} góp ý trước khi duyệt</span>}
       </div>
       <div className="panel">
         <b>Góp ý ({comments.length})</b>

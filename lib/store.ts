@@ -21,3 +21,11 @@ export const writeVideos = (videos: Video[]) =>
 export const checkPassword = (pw: unknown) => !!process.env.ADMIN_PASSWORD && pw === process.env.ADMIN_PASSWORD;
 
 export const denied = () => NextResponse.json({ error: "Sai mật khẩu" }, { status: 401 });
+
+// Đọc góp ý của một video (để kiểm tra trước khi duyệt)
+export async function readComments(id: string): Promise<{ status?: string }[]> {
+  const { blobs } = await list({ prefix: `comments/${id}.json`, limit: 1 });
+  if (!blobs[0]) return [];
+  const res = await fetch(`${blobs[0].url}?t=${Date.now()}`, { cache: "no-store" });
+  return res.ok ? res.json() : [];
+}
