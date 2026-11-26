@@ -7,7 +7,8 @@ export const categories: Category[] = [
   { slug: "chung", name: "Danh mục chung", icon: "📚", color: "#d97706" },
   { slug: "app-dien-thoai", name: "App điện thoại", icon: "📱", color: "#0891b2" },
   { slug: "app-may-tinh", name: "App máy tính", icon: "💻", color: "#0d9488" },
-  { slug: "phan-chia-thi-truong", name: "Danh mục kế hoạch", icon: "🧭", color: "#9333ea" },
+  { slug: "phan-chia-thi-truong", name: "Danh mục kế hoạch", icon: "📋", color: "#9333ea" },
+  { slug: "phieu-phan-chia-thi-truong", name: "Phiếu phân chia thị trường", icon: "🧭", color: "#7c3aed" },
 ];
 
 export const categoryBySlug = (slug: string) => categories.find((c) => c.slug === slug);
